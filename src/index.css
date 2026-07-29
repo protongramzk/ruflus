@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@layer base {
+  /* Cassava UI: Strict Orthogonal Geometries, 0px border radius, Inter Font, monochrome */
+  * {
+    border-radius: 0px !important;
+  }
+}
