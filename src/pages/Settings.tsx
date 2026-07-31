@@ -3,6 +3,7 @@ import { getProfile, updateProfile } from '../utils/storage';
 import { AppProfile } from '../types';
 import { ProfileSection } from '../components/settings/ProfileSection';
 import { BackupRestore } from '../components/settings/BackupRestore';
+import { AIExport } from '../components/settings/AIExport';
 import { Card } from '../components/ui/Card';
 import { Select } from '../components/ui/Input';
 
@@ -71,6 +72,9 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
           onRefreshData();
         }}
       />
+
+      {/* AI Export Tool */}
+      <AIExport />
 
       {/* About Application */}
       <Card title="Tentang Ruflus" className="bg-white">

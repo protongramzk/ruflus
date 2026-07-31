@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+import { expect, test } from 'vitest';
 import { calculateSettlements } from '../components/split/DebtSolver';
 import { SplitMember, SplitExpense, SplitShare } from '../types';
 
