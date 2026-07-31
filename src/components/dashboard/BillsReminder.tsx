@@ -2,14 +2,16 @@ import React from 'react';
 import { Bill } from '../../types';
 import { Card } from '../ui/Card';
 import { Calendar, AlertCircle } from 'lucide-react';
+import { t, formatAmount } from '../../utils/translations';
 
 interface BillsReminderProps {
   bills: Bill[];
   currency: string;
   onViewAll: () => void;
+  lang?: string;
 }
 
-export const BillsReminder: React.FC<BillsReminderProps> = ({ bills, currency, onViewAll }) => {
+export const BillsReminder: React.FC<BillsReminderProps> = ({ bills, currency, onViewAll, lang }) => {
   const unpaidBills = bills.filter(b => !b.paid);
 
   // Sort unpaid bills by due date to get the closest one
@@ -22,10 +24,10 @@ export const BillsReminder: React.FC<BillsReminderProps> = ({ bills, currency, o
   const nextBill = sortedUnpaid[0];
 
   return (
-    <Card title="Bills Reminder">
+    <Card title={t('billsTitle', lang)}>
       <div className="flex flex-col space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tagihan Belum Dibayar</span>
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('unpaid', lang)}</span>
           <span className="text-lg font-extrabold text-black">{unpaidBills.length}</span>
         </div>
 
@@ -33,7 +35,7 @@ export const BillsReminder: React.FC<BillsReminderProps> = ({ bills, currency, o
           <div className="flex items-center space-x-2 border border-red-600 bg-red-50/50 p-2 text-red-600 text-xs">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span className="font-extrabold uppercase tracking-wide">
-              {overdueCount} TAGIHAN SUDAH JATUH TEMPO!
+              {overdueCount} {t('overdueBills', lang).toUpperCase()}!
             </span>
           </div>
         )}
@@ -47,19 +49,19 @@ export const BillsReminder: React.FC<BillsReminderProps> = ({ bills, currency, o
                   {nextBill.title}
                 </p>
                 <p className="text-[10px] text-gray-500 mt-0.5 font-bold">
-                  Jatuh Tempo: {nextBill.dueDate}
+                  {t('dueDate', lang)}: {nextBill.dueDate}
                 </p>
               </div>
             </div>
             <div className="text-right">
               <p className="text-xs font-extrabold text-black">
-                {currency} {nextBill.amount.toLocaleString('id-ID')}
+                {formatAmount(nextBill.amount, currency, lang)}
               </p>
             </div>
           </div>
         ) : (
           <div className="py-2 text-center text-xs text-gray-500 uppercase tracking-wider border border-dashed border-black/20">
-            Tidak ada tagihan terdekat
+            {t('none', lang)}
           </div>
         )}
       </div>
@@ -67,7 +69,7 @@ export const BillsReminder: React.FC<BillsReminderProps> = ({ bills, currency, o
         onClick={onViewAll}
         className="w-full text-center text-[10px] font-extrabold uppercase tracking-widest mt-4 pt-2 border-t border-black/10 hover:underline text-black"
       >
-        Kelola Semua Tagihan →
+        {t('viewAll', lang)} →
       </button>
     </Card>
   );

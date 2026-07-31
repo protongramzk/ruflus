@@ -5,7 +5,8 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { GoalForm } from '../components/savings/GoalForm';
-import { Plus, Landmark } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { t, formatAmount } from '../utils/translations';
 
 interface SavingsProps {
   onViewGoal: (id: string) => void;
@@ -27,6 +28,8 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
 
   if (!profile) return null;
 
+  const lang = profile.language || 'id';
+
   const handleCreateGoal = (data: { name: string; targetAmount: number; deadline: string; note: string }) => {
     addSavingGoal(data);
     reloadData();
@@ -38,24 +41,26 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-black text-black uppercase tracking-tight">Savings</h1>
-          <p className="text-xs text-gray-400 font-bold">Raih impian keuangan Anda melalui tabungan</p>
+          <h1 className="text-xl font-black text-black uppercase tracking-tight">{t('savings', lang)}</h1>
+          <p className="text-xs text-gray-400 font-bold">
+            {lang === 'id' ? 'Raih impian keuangan Anda melalui tabungan' : lang === 'ms' ? 'Raih impian kewangan anda melalui simpanan' : lang === 'ja' ? '貯金を通じてあなたの財務目標を達成します' : '通过储蓄实现您的财务梦想'}
+          </p>
         </div>
       </div>
 
       {/* Goal List */}
       <div className="flex flex-col space-y-2 mt-2">
         <h2 className="text-xs font-black uppercase tracking-widest text-black border-b border-black pb-1.5">
-          Target Tabungan Aktif ({goals.length})
+          {lang === 'id' ? 'Target Tabungan Aktif' : lang === 'ms' ? 'Sasaran Simpanan Aktif' : lang === 'ja' ? '現在アクティブな貯金目標' : '进行中的储蓄目标'} ({goals.length})
         </h2>
 
         {goals.length === 0 ? (
           <div className="py-12 border border-dashed border-black/20 text-center flex flex-col items-center justify-center space-y-2 bg-gray-50/50">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Belum ada target tabungan dibuat
+              {lang === 'id' ? 'Belum ada target tabungan dibuat' : lang === 'ms' ? 'Belum ada sasaran simpanan dicipta' : lang === 'ja' ? '目標はまだ作成されていません' : '暂无储蓄目标'}
             </span>
             <Button variant="secondary" onClick={() => setIsAddOpen(true)} className="text-xs px-3 py-1">
-              Mulai Menabung
+              {lang === 'id' ? 'Mulai Menabung' : lang === 'ms' ? 'Mula Menyimpan' : lang === 'ja' ? '貯金を始める' : '开始储蓄'}
             </Button>
           </div>
         ) : (
@@ -78,7 +83,7 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
                           {goal.name}
                         </h3>
                         <p className="text-[10px] text-gray-400 font-bold mt-0.5">
-                          Tenggat: {goal.deadline}
+                          {t('deadline', lang)}: {goal.deadline}
                         </p>
                       </div>
 
@@ -98,8 +103,8 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
                     </div>
 
                     <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
-                      <span>Terkumpul: {profile.currency} {goal.currentAmount.toLocaleString('id-ID')}</span>
-                      <span>Target: {profile.currency} {goal.targetAmount.toLocaleString('id-ID')}</span>
+                      <span>{t('currentSavings', lang)}: {formatAmount(goal.currentAmount, profile.currency, lang)}</span>
+                      <span>{lang === 'id' ? 'Target' : lang === 'ms' ? 'Sasaran' : lang === 'ja' ? '目標金額' : '目标'}: {formatAmount(goal.targetAmount, profile.currency, lang)}</span>
                     </div>
                   </div>
                 </Card>
@@ -121,10 +126,11 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
       </div>
 
       {/* Add Modal */}
-      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Tambah Target Tabungan">
+      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title={t('addGoal', lang)}>
         <GoalForm
           onSubmit={handleCreateGoal}
           onCancel={() => setIsAddOpen(false)}
+          lang={lang}
         />
       </Modal>
     </div>

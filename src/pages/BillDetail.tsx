@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { BillForm } from '../components/bills/BillForm';
 import { ArrowLeft, Trash2, Edit, CheckSquare, Square } from 'lucide-react';
+import { t, formatAmount } from '../utils/translations';
 
 interface BillDetailProps {
   billId: string;
@@ -34,6 +35,8 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
 
   if (!bill || !profile) return null;
 
+  const lang = profile.language || 'id';
+
   const handleTogglePaid = () => {
     updateBill(billId, { paid: !bill.paid });
     reloadData();
@@ -46,18 +49,19 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
   };
 
   const handleDelete = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus tagihan ini?')) {
+    const confirmMsg = lang === 'id' ? 'Apakah Anda yakin ingin menghapus tagihan ini?' : lang === 'ms' ? 'Adakah anda pasti ingin memadam bil ini?' : lang === 'ja' ? 'この請求書を削除してもよろしいですか？' : '您确定要删除此账单吗？';
+    if (confirm(confirmMsg)) {
       deleteBill(billId);
       onBack();
     }
   };
 
   const repeatLabels: Record<string, string> = {
-    none: 'Satu Kali (None)',
-    daily: 'Harian',
-    weekly: 'Mingguan',
-    monthly: 'Bulanan',
-    yearly: 'Tahunan'
+    none: lang === 'id' ? 'Satu Kali (None)' : lang === 'ms' ? 'Sekali Sahaja' : lang === 'ja' ? '1回のみ' : '单次',
+    daily: t('daily', lang),
+    weekly: t('weekly', lang),
+    monthly: t('monthly', lang),
+    yearly: t('yearly', lang)
   };
 
   return (
@@ -68,7 +72,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
         className="flex items-center text-xs font-bold text-black uppercase tracking-wider hover:underline self-start space-x-1"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali</span>
+        <span>{t('back', lang)}</span>
       </button>
 
       {/* Detail Card */}
@@ -79,29 +83,29 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
               <h1 className={`text-lg font-black text-black uppercase tracking-tight ${bill.paid ? 'line-through text-gray-400' : ''}`}>
                 {bill.title}
               </h1>
-              <p className="text-xs text-gray-400 font-bold mt-0.5">Jatuh Tempo: {bill.dueDate}</p>
+              <p className="text-xs text-gray-400 font-bold mt-0.5">{t('dueDate', lang)}: {bill.dueDate}</p>
             </div>
 
             {bill.paid ? (
               <span className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-0.5">
-                PAID
+                {t('paid', lang).toUpperCase()}
               </span>
             ) : (
               <span className="text-[10px] font-black uppercase tracking-widest border border-red-600 text-red-600 px-2 py-0.5">
-                UNPAID
+                {t('unpaid', lang).toUpperCase()}
               </span>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4 pt-3 border-t border-black/10 text-xs">
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Nominal Tagihan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{lang === 'id' ? 'Nominal Tagihan' : lang === 'ms' ? 'Jumlah Bil' : lang === 'ja' ? '請求金額' : '账单金额'}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
-                {profile.currency} {bill.amount.toLocaleString('id-ID')}
+                {formatAmount(bill.amount, profile.currency, lang)}
               </p>
             </div>
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Pengulangan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t('repeat', lang)}</span>
               <p className="text-sm font-extrabold text-black mt-0.5 uppercase tracking-wide">
                 {repeatLabels[bill.repeat] || bill.repeat}
               </p>
@@ -110,7 +114,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
 
           {bill.note && (
             <div className="border border-dashed border-black/20 p-2.5 bg-gray-50 text-xs text-gray-600">
-              <span className="font-bold text-[10px] uppercase block mb-1 text-black">Catatan Tagihan:</span>
+              <span className="font-bold text-[10px] uppercase block mb-1 text-black">{t('note', lang)}:</span>
               {bill.note}
             </div>
           )}
@@ -127,12 +131,12 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
           {bill.paid ? (
             <>
               <Square className="w-4 h-4" />
-              Tandai Belum Dibayar
+              {lang === 'id' ? 'Tandai Belum Dibayar' : lang === 'ms' ? 'Tanda Belum Dibayar' : lang === 'ja' ? '未払いに戻す' : '标记为未支付'}
             </>
           ) : (
             <>
               <CheckSquare className="w-4 h-4" />
-              Tandai Sudah Dibayar
+              {t('markAsPaid', lang)}
             </>
           )}
         </Button>
@@ -144,7 +148,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
             className="flex items-center justify-center gap-1.5"
           >
             <Edit className="w-4 h-4" />
-            Ubah Tagihan
+            {lang === 'id' ? 'Ubah Tagihan' : lang === 'ms' ? 'Ubah Bil' : lang === 'ja' ? '請求書を変更' : '修改账单'}
           </Button>
           <Button
             onClick={handleDelete}
@@ -152,17 +156,18 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
             className="flex items-center justify-center gap-1.5"
           >
             <Trash2 className="w-4 h-4" />
-            Hapus Tagihan
+            {lang === 'id' ? 'Hapus Tagihan' : lang === 'ms' ? 'Padam Bil' : lang === 'ja' ? '請求書を削除' : '删除账单'}
           </Button>
         </div>
       </div>
 
       {/* Edit Modal */}
-      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Ubah Tagihan">
+      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title={lang === 'id' ? 'Ubah Tagihan' : lang === 'ms' ? 'Ubah Bil' : lang === 'ja' ? '請求書を変更' : '修改账单'}>
         <BillForm
           onSubmit={handleEditSubmit}
           onCancel={() => setIsEditOpen(false)}
           initialBill={bill}
+          lang={lang}
         />
       </Modal>
     </div>

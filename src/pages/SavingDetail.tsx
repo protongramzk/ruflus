@@ -13,7 +13,8 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { DepositForm } from '../components/savings/DepositForm';
 import { GoalForm } from '../components/savings/GoalForm';
-import { ArrowLeft, Trash2, Edit, Landmark, ArrowUpCircle } from 'lucide-react';
+import { ArrowLeft, Trash2, Edit, ArrowUpCircle } from 'lucide-react';
+import { t, formatAmount, getLocale } from '../utils/translations';
 
 interface SavingDetailProps {
   goalId: string;
@@ -46,6 +47,8 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
 
   if (!goal || !profile) return null;
 
+  const lang = profile.language || 'id';
+
   const percent = goal.targetAmount > 0
     ? Math.min(100, Math.round((goal.currentAmount / goal.targetAmount) * 100))
     : 0;
@@ -67,7 +70,8 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
   };
 
   const handleDeleteGoal = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus target tabungan ini beserta seluruh riwayat setorannya?')) {
+    const confirmMsg = lang === 'id' ? 'Apakah Anda yakin ingin menghapus target tabungan ini beserta seluruh riwayat setorannya?' : lang === 'ms' ? 'Adakah anda pasti ingin memadam sasaran simpanan ini bersama semua rekod simpanannya?' : lang === 'ja' ? 'この貯金目標とすべての貯金履歴を削除してもよろしいですか？' : '您确定要删除此储蓄目标及其所有储蓄记录吗？';
+    if (confirm(confirmMsg)) {
       deleteSavingGoal(goalId);
       onBack();
     }
@@ -81,7 +85,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
         className="flex items-center text-xs font-bold text-black uppercase tracking-wider hover:underline self-start space-x-1"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali</span>
+        <span>{t('back', lang)}</span>
       </button>
 
       {/* Goal Header Panel */}
@@ -90,7 +94,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-lg font-black text-black uppercase tracking-tight">{goal.name}</h1>
-              <p className="text-xs text-gray-400 font-bold mt-0.5">Tenggat: {goal.deadline}</p>
+              <p className="text-xs text-gray-400 font-bold mt-0.5">{t('deadline', lang)}: {goal.deadline}</p>
             </div>
             <span className="text-sm font-black text-black">{percent}%</span>
           </div>
@@ -105,22 +109,22 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
 
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-black/10">
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Terkumpul</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t('currentSavings', lang)}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
-                {profile.currency} {goal.currentAmount.toLocaleString('id-ID')}
+                {formatAmount(goal.currentAmount, profile.currency, lang)}
               </p>
             </div>
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Kekurangan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t('remaining', lang)}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
-                {profile.currency} {Math.max(0, goal.targetAmount - goal.currentAmount).toLocaleString('id-ID')}
+                {formatAmount(Math.max(0, goal.targetAmount - goal.currentAmount), profile.currency, lang)}
               </p>
             </div>
           </div>
 
           {goal.note && (
             <div className="border border-dashed border-black/20 p-2.5 bg-gray-50 text-xs text-gray-600">
-              <span className="font-bold text-[10px] uppercase block mb-1 text-black">Catatan Target:</span>
+              <span className="font-bold text-[10px] uppercase block mb-1 text-black">{t('note', lang)}:</span>
               {goal.note}
             </div>
           )}
@@ -135,7 +139,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           className="flex items-center justify-center gap-1 text-xs"
         >
           <ArrowUpCircle className="w-4 h-4" />
-          Setor
+          {t('deposit', lang)}
         </Button>
         <Button
           onClick={() => setIsEditOpen(true)}
@@ -143,7 +147,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           className="flex items-center justify-center gap-1 text-xs"
         >
           <Edit className="w-4 h-4" />
-          Ubah
+          {t('edit', lang)}
         </Button>
         <Button
           onClick={handleDeleteGoal}
@@ -151,24 +155,24 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           className="flex items-center justify-center gap-1 text-xs"
         >
           <Trash2 className="w-4 h-4" />
-          Hapus
+          {t('delete', lang)}
         </Button>
       </div>
 
       {/* Deposit Histories */}
       <div className="flex flex-col space-y-2 mt-2">
         <h2 className="text-xs font-black uppercase tracking-widest text-black border-b border-black pb-1.5">
-          Riwayat Setoran ({histories.length})
+          {t('depositHistory', lang)} ({histories.length})
         </h2>
 
         {histories.length === 0 ? (
           <div className="py-8 border border-dashed border-black/20 text-center text-xs text-gray-400 uppercase tracking-wider bg-gray-50/50">
-            Belum ada setoran masuk
+            {t('none', lang)}
           </div>
         ) : (
           <div className="flex flex-col space-y-2">
             {histories.map(h => {
-              const dStr = new Date(h.createdAt).toLocaleDateString('id-ID', {
+              const dStr = new Date(h.createdAt).toLocaleDateString(getLocale(lang), {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric'
@@ -178,13 +182,13 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
                 <div key={h.id} className="border border-black bg-white p-3 flex justify-between items-center text-xs">
                   <div>
                     <span className="font-extrabold text-black uppercase tracking-wide block">
-                      {h.note || 'Setoran Tabungan'}
+                      {h.note || t('deposit', lang)}
                     </span>
                     <span className="text-[10px] text-gray-400 mt-0.5 block">{dStr}</span>
                   </div>
 
                   <span className="font-black text-green-600 text-sm">
-                    + {profile.currency} {h.amount.toLocaleString('id-ID')}
+                    + {formatAmount(h.amount, profile.currency, lang)}
                   </span>
                 </div>
               );
@@ -194,19 +198,21 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
       </div>
 
       {/* Setor Modal */}
-      <Modal isOpen={isDepositOpen} onClose={() => setIsDepositOpen(false)} title="Setor Tabungan">
+      <Modal isOpen={isDepositOpen} onClose={() => setIsDepositOpen(false)} title={t('deposit', lang)}>
         <DepositForm
           onSubmit={handleDeposit}
           onCancel={() => setIsDepositOpen(false)}
+          lang={lang}
         />
       </Modal>
 
       {/* Edit Modal */}
-      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Ubah Target Tabungan">
+      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title={t('edit', lang)}>
         <GoalForm
           onSubmit={handleEditGoal}
           onCancel={() => setIsEditOpen(false)}
           initialGoal={goal}
+          lang={lang}
         />
       </Modal>
     </div>

@@ -81,4 +81,5 @@ export interface Bill {
 export interface AppProfile {
   name: string;
   currency: string; // e.g. 'Rp' or '$'
+  language?: 'id' | 'ms' | 'ja' | 'zh';
 }

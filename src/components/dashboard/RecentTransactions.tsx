@@ -2,6 +2,7 @@ import React from 'react';
 import { Transaction, Category } from '../../types';
 import { Card } from '../ui/Card';
 import { DynamicIcon } from '../ui/DynamicIcon';
+import { t, formatAmount, translateCategory, getLocale } from '../../utils/translations';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -9,6 +10,7 @@ interface RecentTransactionsProps {
   currency: string;
   onViewAll: () => void;
   onTxClick: (id: string) => void;
+  lang?: string;
 }
 
 export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
@@ -16,7 +18,8 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   categories,
   currency,
   onViewAll,
-  onTxClick
+  onTxClick,
+  lang
 }) => {
   // Sort by date desc, get first 5-10
   const sorted = [...transactions]
@@ -24,17 +27,18 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     .slice(0, 5);
 
   return (
-    <Card title="Recent Transactions">
+    <Card title={t('recentTransactions', lang)}>
       {sorted.length === 0 ? (
         <div className="py-4 text-center text-xs text-gray-500 uppercase tracking-wider">
-          Belum ada transaksi
+          {t('none', lang)}
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-black/10">
           {sorted.map(tx => {
             const cat = categories.find(c => c.id === tx.categoryId);
             const isInc = tx.type === 'income';
-            const dateStr = new Date(tx.createdAt).toLocaleDateString('id-ID', {
+            const catNameTranslated = cat ? translateCategory(cat.id, cat.name, lang) : '';
+            const dateStr = new Date(tx.createdAt).toLocaleDateString(getLocale(lang), {
               day: 'numeric',
               month: 'short'
             });
@@ -51,15 +55,15 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                   </div>
                   <div className="truncate">
                     <p className="text-xs font-extrabold text-black uppercase tracking-wide truncate max-w-[150px]">
-                      {tx.note || cat?.name || 'Transaksi'}
+                      {tx.note || catNameTranslated || t('finance', lang)}
                     </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{dateStr} • {cat?.name}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{dateStr} • {catNameTranslated}</p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
                   <p className={`text-xs font-extrabold ${isInc ? 'text-green-600' : 'text-black'}`}>
-                    {isInc ? '+' : '-'} {currency} {tx.amount.toLocaleString('id-ID')}
+                    {isInc ? '+' : '-'} {formatAmount(tx.amount, currency, lang)}
                   </p>
                 </div>
               </div>
@@ -71,7 +75,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
         onClick={onViewAll}
         className="w-full text-center text-[10px] font-extrabold uppercase tracking-widest mt-4 pt-2 border-t border-black/10 hover:underline text-black"
       >
-        Lihat Riwayat Transaksi →
+        {t('viewAll', lang)} →
       </button>
     </Card>
   );

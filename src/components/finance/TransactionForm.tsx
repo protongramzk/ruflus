@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Category, Transaction } from '../../types';
 import { Input, Select } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { t, translateCategory } from '../../utils/translations';
 
 interface TransactionFormProps {
   categories: Category[];
@@ -15,13 +16,15 @@ interface TransactionFormProps {
   }) => void;
   onCancel: () => void;
   initialTx?: Transaction | null;
+  lang?: string;
 }
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({
   categories,
   onSubmit,
   onCancel,
-  initialTx
+  initialTx,
+  lang
 }) => {
   const [type, setType] = useState<'income' | 'expense'>('expense');
   const [amount, setAmount] = useState<string>('');
@@ -67,11 +70,11 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     e.preventDefault();
     const numAmt = parseFloat(amount);
     if (isNaN(numAmt) || numAmt <= 0) {
-      setError('Masukkan nominal transaksi yang valid (> 0)');
+      setError(lang === 'id' ? 'Masukkan nominal transaksi yang valid (> 0)' : lang === 'ms' ? 'Sila masukkan jumlah transaksi yang sah (> 0)' : lang === 'ja' ? '有効な取引金額を入力してください（0より大きい値）' : '请输入有效的交易金额（大于 0）');
       return;
     }
     if (!categoryId) {
-      setError('Silakan pilih kategori');
+      setError(lang === 'id' ? 'Silakan pilih kategori' : lang === 'ms' ? 'Sila pilih kategori' : lang === 'ja' ? 'カテゴリを選択してください' : '请选择类别');
       return;
     }
     setError('');
@@ -108,7 +111,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
               : 'text-black hover:bg-black/5'
           }`}
         >
-          Pengeluaran
+          {t('expense', lang)}
         </button>
         <button
           type="button"
@@ -119,34 +122,34 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
               : 'text-black hover:bg-black/5'
           }`}
         >
-          Pemasukan
+          {t('income', lang)}
         </button>
       </div>
 
       <Input
-        label="Nominal"
+        label={lang === 'id' ? 'Nominal' : lang === 'ms' ? 'Jumlah' : lang === 'ja' ? '金額' : '金额'}
         type="number"
-        placeholder="Contoh: 50000"
+        placeholder={lang === 'id' ? 'Contoh: 50000' : lang === 'ms' ? 'Contoh: 50' : lang === 'ja' ? '例: 5000' : '例如: 500'}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         required
       />
 
       <Select
-        label="Kategori"
+        label={t('category', lang)}
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
         required
       >
         {filteredCategories.map(c => (
           <option key={c.id} value={c.id}>
-            {c.name}
+            {translateCategory(c.id, c.name, lang)}
           </option>
         ))}
       </Select>
 
       <Input
-        label="Tanggal Transaksi"
+        label={t('date', lang)}
         type="date"
         value={customDate}
         onChange={(e) => setCustomDate(e.target.value)}
@@ -154,9 +157,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       />
 
       <Input
-        label="Catatan"
+        label={t('note', lang)}
         type="text"
-        placeholder="Contoh: Beli makan siang"
+        placeholder={lang === 'id' ? 'Contoh: Beli makan siang' : lang === 'ms' ? 'Contoh: Beli makanan tengah hari' : lang === 'ja' ? '例: ランチ代' : '例如: 购买午餐'}
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
@@ -165,10 +168,10 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
       <div className="flex space-x-2 pt-2 border-t border-black/10">
         <Button type="button" variant="secondary" fullWidth onClick={onCancel}>
-          Batal
+          {t('cancel', lang)}
         </Button>
         <Button type="submit" variant="primary" fullWidth>
-          {initialTx ? 'Simpan' : 'Tambah'}
+          {initialTx ? t('save', lang) : t('add', lang)}
         </Button>
       </div>
     </form>
