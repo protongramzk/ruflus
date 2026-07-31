@@ -16,6 +16,7 @@ import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
 import { DynamicIcon } from '../components/ui/DynamicIcon';
 import { Filter, Plus } from 'lucide-react';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface FinanceProps {
   initialTxId?: string | null;
@@ -50,7 +51,6 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
     reloadData();
   }, []);
 
-  // Handle opening directly into detail page if routed from RecentTransactions
   useEffect(() => {
     if (initialTxId) {
       const txs = getTransactions();
@@ -65,12 +65,14 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
 
   if (!profile) return null;
 
-  // Apply filters
-  const filteredTransactions = transactions.filter(t => {
-    if (selectedType !== 'all' && t.type !== selectedType) return false;
-    if (selectedCategory !== 'all' && t.categoryId !== selectedCategory) return false;
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
 
-    const txDateStr = t.createdAt.split('T')[0];
+  // Apply filters
+  const filteredTransactions = transactions.filter(tx => {
+    if (selectedType !== 'all' && tx.type !== selectedType) return false;
+    if (selectedCategory !== 'all' && tx.categoryId !== selectedCategory) return false;
+
+    const txDateStr = tx.createdAt.split('T')[0];
     if (startDate && txDateStr < startDate) return false;
     if (endDate && txDateStr > endDate) return false;
 
@@ -79,12 +81,12 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
 
   // Calculations
   const incomeTotal = filteredTransactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter(tx => tx.type === 'income')
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
   const expenseTotal = filteredTransactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter(tx => tx.type === 'expense')
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
   // Form submits
   const handleAddTx = (data: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'> & { createdAt?: string }) => {
@@ -102,9 +104,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
         note: data.note,
         ...(data.createdAt ? { updatedAt: new Date().toISOString() } : {})
       });
-      // Directly assign custom date if provided in raw format since our helper handles updates on general updates
       if (data.createdAt) {
-        // Retrieve and overwrite specifically
         const all = getTransactions();
         const found = all.find(x => x.id === selectedTx.id);
         if (found) {
@@ -121,7 +121,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
 
   const handleDeleteTx = () => {
     if (selectedTx) {
-      if (confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+      if (confirm(t.confirmDeleteTx)) {
         deleteTransaction(selectedTx.id);
         reloadData();
         setSelectedTx(null);
@@ -135,8 +135,8 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-black text-black uppercase tracking-tight">Finance</h1>
-          <p className="text-xs text-gray-400 font-bold">Catat pengeluaran dan pemasukan harian</p>
+          <h1 className="text-xl font-black text-black uppercase tracking-tight">{t.finance}</h1>
+          <p className="text-xs text-gray-400 font-bold">{t.financeSub}</p>
         </div>
         <Button
           onClick={() => setShowFilters(!showFilters)}
@@ -144,7 +144,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
           className="flex items-center gap-2"
         >
           <Filter className="w-4 h-4" />
-          Filter
+          {t.filter}
         </Button>
       </div>
 
@@ -173,16 +173,16 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
       {/* Transaction List */}
       <div className="flex flex-col space-y-2 mt-2">
         <h2 className="text-xs font-black uppercase tracking-widest text-black border-b border-black pb-1.5">
-          Riwayat Transaksi ({filteredTransactions.length})
+          {t.txHistory} ({filteredTransactions.length})
         </h2>
 
         {filteredTransactions.length === 0 ? (
           <div className="py-12 border border-dashed border-black/20 text-center flex flex-col items-center justify-center space-y-2 bg-gray-50/50">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Belum ada transaksi yang sesuai
+              {t.noTxFound}
             </span>
             <Button variant="secondary" onClick={() => setIsAddOpen(true)} className="text-xs px-3 py-1">
-              Catat Sekarang
+              {t.addNow}
             </Button>
           </div>
         ) : (
@@ -190,7 +190,10 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
             {filteredTransactions.map(tx => {
               const cat = categories.find(c => c.id === tx.categoryId);
               const isInc = tx.type === 'income';
-              const dateStr = new Date(tx.createdAt).toLocaleDateString('id-ID', {
+              const localeMap: Record<string, string> = { id: 'id-ID', ms: 'ms-MY', ja: 'ja-JP', zh: 'zh-CN' };
+              const currentLocale = localeMap[profile.language] || 'id-ID';
+
+              const dateStr = new Date(tx.createdAt).toLocaleDateString(currentLocale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric'
@@ -246,7 +249,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
 
       {/* Modals */}
       {/* Add Modal */}
-      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Tambah Transaksi">
+      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title={t.addTx}>
         <TransactionForm
           categories={categories}
           onSubmit={handleAddTx}
@@ -255,33 +258,33 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
       </Modal>
 
       {/* Detail Modal */}
-      <Modal isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); setSelectedTx(null); }} title="Detail Transaksi">
+      <Modal isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); setSelectedTx(null); }} title={t.txDetail}>
         {selectedTx && (
           <div className="flex flex-col space-y-4">
             <div className="border border-black p-4 bg-gray-50 flex flex-col space-y-2">
               <div>
-                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Nominal</span>
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.amount}</span>
                 <p className={`text-xl font-extrabold ${selectedTx.type === 'income' ? 'text-green-600' : 'text-black'}`}>
                   {selectedTx.type === 'income' ? '+' : '-'} {profile.currency} {selectedTx.amount.toLocaleString('id-ID')}
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Kategori</span>
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.category}</span>
                 <p className="text-xs font-extrabold text-black uppercase tracking-wide">
                   {categories.find(c => c.id === selectedTx.categoryId)?.name || '-'}
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Tanggal</span>
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.date}</span>
                 <p className="text-xs font-medium text-black">
                   {new Date(selectedTx.createdAt).toLocaleString('id-ID')}
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Catatan</span>
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.note}</span>
                 <p className="text-xs font-medium text-black">
                   {selectedTx.note || '-'}
                 </p>
@@ -294,7 +297,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
                 fullWidth
                 onClick={handleDeleteTx}
               >
-                Hapus
+                {t.delete}
               </Button>
               <Button
                 variant="primary"
@@ -304,7 +307,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
                   setIsEditOpen(true);
                 }}
               >
-                Ubah
+                {t.edit}
               </Button>
             </div>
           </div>
@@ -312,7 +315,7 @@ export const Finance: React.FC<FinanceProps> = ({ initialTxId, onClearInitialId 
       </Modal>
 
       {/* Edit Modal */}
-      <Modal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setSelectedTx(null); }} title="Ubah Transaksi">
+      <Modal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setSelectedTx(null); }} title={t.txEdit}>
         <TransactionForm
           categories={categories}
           initialTx={selectedTx}

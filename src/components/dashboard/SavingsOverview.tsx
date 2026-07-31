@@ -1,19 +1,23 @@
 import React from 'react';
-import { SavingGoal } from '../../types';
+import { SavingGoal, AppLanguage } from '../../types';
 import { Card } from '../ui/Card';
+import { TRANSLATIONS } from '../../utils/i18n';
 
 interface SavingsOverviewProps {
   goals: SavingGoal[];
   currency: string;
   onViewAll: () => void;
+  lang: AppLanguage;
 }
 
-export const SavingsOverview: React.FC<SavingsOverviewProps> = ({ goals, currency, onViewAll }) => {
+export const SavingsOverview: React.FC<SavingsOverviewProps> = ({ goals, currency, onViewAll, lang }) => {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+
   return (
-    <Card title="Savings Overview" className="w-full">
+    <Card title={t.savingsOverview} className="w-full">
       {goals.length === 0 ? (
         <div className="py-4 text-center text-xs text-gray-500 uppercase tracking-wider">
-          Belum ada target tabungan
+          {t.noSavings}
         </div>
       ) : (
         <div className="flex flex-col space-y-4">
@@ -49,7 +53,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({ goals, currenc
         onClick={onViewAll}
         className="w-full text-center text-[10px] font-extrabold uppercase tracking-widest mt-4 pt-2 border-t border-black/10 hover:underline text-black"
       >
-        Selengkapnya tentang Tabungan →
+        {t.moreSavings} →
       </button>
     </Card>
   );

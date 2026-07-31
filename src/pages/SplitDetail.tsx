@@ -16,7 +16,8 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { ExpenseForm } from '../components/split/ExpenseForm';
 import { DebtSolver } from '../components/split/DebtSolver';
-import { ArrowLeft, Trash2, Check, UserMinus, Plus } from 'lucide-react';
+import { ArrowLeft, Trash2, Check, Plus } from 'lucide-react';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface SplitDetailProps {
   groupId: string;
@@ -51,6 +52,8 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
 
   if (!group || !profile) return null;
 
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
+
   // Check if all bills are settled
   const expIds = expenses.map(e => e.id);
   const groupShares = shares.filter(s => expIds.includes(s.expenseId));
@@ -77,21 +80,21 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
   };
 
   const handleDeleteExpense = (expId: string) => {
-    if (confirm('Hapus pengeluaran ini dari patungan?')) {
+    if (confirm(t.confirmDeleteExpense)) {
       deleteSplitExpense(expId);
       reloadData();
     }
   };
 
   const handleSettleGroup = () => {
-    if (confirm('Tandai seluruh sisa utang piutang grup ini sebagai Lunas (Settled)?')) {
+    if (confirm(t.confirmSettleGroup)) {
       settleGroup(groupId);
       reloadData();
     }
   };
 
   const handleDeleteGroup = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus grup patungan ini beserta semua datanya?')) {
+    if (confirm(t.confirmDeleteGroup)) {
       deleteSplitGroup(groupId);
       onBack();
     }
@@ -105,7 +108,7 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
         className="flex items-center text-xs font-bold text-black uppercase tracking-wider hover:underline self-start space-x-1"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali</span>
+        <span>{t.back}</span>
       </button>
 
       {/* Group Detail Header Card */}
@@ -114,7 +117,7 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-lg font-black text-black uppercase tracking-tight">{group.name}</h1>
-              <p className="text-xs text-gray-500 mt-0.5">{group.description || 'Tidak ada deskripsi'}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{group.description || t.noDescription}</p>
             </div>
 
             {isSettled ? (
@@ -130,13 +133,13 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
 
           <div className="flex items-center space-x-4 mt-3 pt-3 border-t border-black/10 text-xs">
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Total Patungan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.groupTotalSpend}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
                 {profile.currency} {totalSpend.toLocaleString('id-ID')}
               </p>
             </div>
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Anggota</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.membersLabel}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
                 {members.map(m => m.name).join(', ')}
               </p>
@@ -164,7 +167,7 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
             className="flex items-center justify-center gap-1.5"
           >
             <Check className="w-4 h-4" />
-            Tandai Lunas
+            {t.markAsSettledBtn}
           </Button>
         )}
         <Button
@@ -173,23 +176,23 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
           className={`flex items-center justify-center gap-1.5 ${isSettled || expenses.length === 0 ? 'col-span-2' : ''}`}
         >
           <Trash2 className="w-4 h-4" />
-          Hapus Grup
+          {t.deleteGroupBtn}
         </Button>
       </div>
 
       {/* Expense History List */}
       <div className="flex flex-col space-y-2 mt-2">
         <h2 className="text-xs font-black uppercase tracking-widest text-black border-b border-black pb-1.5">
-          Daftar Pengeluaran ({expenses.length})
+          {t.recentTransactions} ({expenses.length})
         </h2>
 
         {expenses.length === 0 ? (
           <div className="py-12 border border-dashed border-black/20 text-center flex flex-col items-center justify-center space-y-2 bg-gray-50/50">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Belum ada pengeluaran dicatat
+              {t.noRecentTransactions}
             </span>
             <Button variant="secondary" onClick={() => setIsAddExpenseOpen(true)} className="text-xs px-3 py-1">
-              Tambah Pengeluaran
+              {t.addExpenseTitle}
             </Button>
           </div>
         ) : (
@@ -212,7 +215,7 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
                         {exp.title}
                       </h4>
                       <p className="text-[10px] text-gray-400 font-bold mt-0.5">
-                        Dibayar oleh: {payerName} • {dateStr}
+                        {t.paidBy}: {payerName} • {dateStr}
                       </p>
                     </div>
 
@@ -261,7 +264,7 @@ export const SplitDetail: React.FC<SplitDetailProps> = ({ groupId, onBack }) => 
       )}
 
       {/* Add Expense Modal */}
-      <Modal isOpen={isAddExpenseOpen} onClose={() => setIsAddExpenseOpen(false)} title="Tambah Pengeluaran">
+      <Modal isOpen={isAddExpenseOpen} onClose={() => setIsAddExpenseOpen(false)} title={t.addExpenseTitle}>
         <ExpenseForm
           members={members}
           onSubmit={handleAddExpenseSubmit}

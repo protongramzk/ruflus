@@ -78,7 +78,10 @@ export interface Bill {
   note: string;
 }
 
+export type AppLanguage = 'id' | 'ms' | 'ja' | 'zh';
+
 export interface AppProfile {
   name: string;
-  currency: string; // e.g. 'Rp' or '$'
+  currency: string; // e.g. 'Rp', 'RM', '¥', '$'
+  language: AppLanguage;
 }

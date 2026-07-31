@@ -56,7 +56,8 @@ const DEFAULT_CATEGORIES: Category[] = [
 
 const DEFAULT_PROFILE: AppProfile = {
   name: 'Pengguna Ruflus',
-  currency: 'Rp'
+  currency: 'Rp',
+  language: 'id'
 };
 
 // Initialize Storage with Seed Data
@@ -66,6 +67,13 @@ export function initializeStorage() {
   }
   if (!localStorage.getItem(KEYS.PROFILE)) {
     setItem(KEYS.PROFILE, DEFAULT_PROFILE);
+  } else {
+    // Migrate old profile to add language if it doesn't exist
+    const p = getProfile();
+    if (!p.language) {
+      p.language = 'id';
+      setItem(KEYS.PROFILE, p);
+    }
   }
   // Initialize others with empty array if they do not exist
   const arrKeys = [

@@ -13,7 +13,8 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { DepositForm } from '../components/savings/DepositForm';
 import { GoalForm } from '../components/savings/GoalForm';
-import { ArrowLeft, Trash2, Edit, Landmark, ArrowUpCircle } from 'lucide-react';
+import { ArrowLeft, Trash2, Edit, ArrowUpCircle } from 'lucide-react';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface SavingDetailProps {
   goalId: string;
@@ -46,6 +47,8 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
 
   if (!goal || !profile) return null;
 
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
+
   const percent = goal.targetAmount > 0
     ? Math.min(100, Math.round((goal.currentAmount / goal.targetAmount) * 100))
     : 0;
@@ -67,7 +70,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
   };
 
   const handleDeleteGoal = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus target tabungan ini beserta seluruh riwayat setorannya?')) {
+    if (confirm(t.confirmDeleteGoal)) {
       deleteSavingGoal(goalId);
       onBack();
     }
@@ -81,7 +84,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
         className="flex items-center text-xs font-bold text-black uppercase tracking-wider hover:underline self-start space-x-1"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali</span>
+        <span>{t.back}</span>
       </button>
 
       {/* Goal Header Panel */}
@@ -90,7 +93,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-lg font-black text-black uppercase tracking-tight">{goal.name}</h1>
-              <p className="text-xs text-gray-400 font-bold mt-0.5">Tenggat: {goal.deadline}</p>
+              <p className="text-xs text-gray-400 font-bold mt-0.5">{t.savingGoalDeadline}: {goal.deadline}</p>
             </div>
             <span className="text-sm font-black text-black">{percent}%</span>
           </div>
@@ -105,13 +108,13 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
 
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-black/10">
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Terkumpul</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.total}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
                 {profile.currency} {goal.currentAmount.toLocaleString('id-ID')}
               </p>
             </div>
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Kekurangan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.savingDeficit}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
                 {profile.currency} {Math.max(0, goal.targetAmount - goal.currentAmount).toLocaleString('id-ID')}
               </p>
@@ -120,7 +123,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
 
           {goal.note && (
             <div className="border border-dashed border-black/20 p-2.5 bg-gray-50 text-xs text-gray-600">
-              <span className="font-bold text-[10px] uppercase block mb-1 text-black">Catatan Target:</span>
+              <span className="font-bold text-[10px] uppercase block mb-1 text-black">{t.savingGoalNote}:</span>
               {goal.note}
             </div>
           )}
@@ -135,7 +138,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           className="flex items-center justify-center gap-1 text-xs"
         >
           <ArrowUpCircle className="w-4 h-4" />
-          Setor
+          {t.depositBtn}
         </Button>
         <Button
           onClick={() => setIsEditOpen(true)}
@@ -143,7 +146,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           className="flex items-center justify-center gap-1 text-xs"
         >
           <Edit className="w-4 h-4" />
-          Ubah
+          {t.edit}
         </Button>
         <Button
           onClick={handleDeleteGoal}
@@ -151,19 +154,19 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
           className="flex items-center justify-center gap-1 text-xs"
         >
           <Trash2 className="w-4 h-4" />
-          Hapus
+          {t.delete}
         </Button>
       </div>
 
       {/* Deposit Histories */}
       <div className="flex flex-col space-y-2 mt-2">
         <h2 className="text-xs font-black uppercase tracking-widest text-black border-b border-black pb-1.5">
-          Riwayat Setoran ({histories.length})
+          {t.savingHistoryTitle} ({histories.length})
         </h2>
 
         {histories.length === 0 ? (
           <div className="py-8 border border-dashed border-black/20 text-center text-xs text-gray-400 uppercase tracking-wider bg-gray-50/50">
-            Belum ada setoran masuk
+            {t.noDeposits}
           </div>
         ) : (
           <div className="flex flex-col space-y-2">
@@ -194,7 +197,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
       </div>
 
       {/* Setor Modal */}
-      <Modal isOpen={isDepositOpen} onClose={() => setIsDepositOpen(false)} title="Setor Tabungan">
+      <Modal isOpen={isDepositOpen} onClose={() => setIsDepositOpen(false)} title={t.depositTitle}>
         <DepositForm
           onSubmit={handleDeposit}
           onCancel={() => setIsDepositOpen(false)}
@@ -202,7 +205,7 @@ export const SavingDetail: React.FC<SavingDetailProps> = ({ goalId, onBack }) =>
       </Modal>
 
       {/* Edit Modal */}
-      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Ubah Target Tabungan">
+      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title={t.edit}>
         <GoalForm
           onSubmit={handleEditGoal}
           onCancel={() => setIsEditOpen(false)}

@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { BillForm } from '../components/bills/BillForm';
 import { ArrowLeft, Trash2, Edit, CheckSquare, Square } from 'lucide-react';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface BillDetailProps {
   billId: string;
@@ -34,6 +35,8 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
 
   if (!bill || !profile) return null;
 
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
+
   const handleTogglePaid = () => {
     updateBill(billId, { paid: !bill.paid });
     reloadData();
@@ -46,18 +49,18 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
   };
 
   const handleDelete = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus tagihan ini?')) {
+    if (confirm(t.confirmDeleteBill)) {
       deleteBill(billId);
       onBack();
     }
   };
 
   const repeatLabels: Record<string, string> = {
-    none: 'Satu Kali (None)',
-    daily: 'Harian',
-    weekly: 'Mingguan',
-    monthly: 'Bulanan',
-    yearly: 'Tahunan'
+    none: t.repeatNone,
+    daily: t.repeatDaily,
+    weekly: t.repeatWeekly,
+    monthly: t.repeatMonthly,
+    yearly: t.repeatYearly
   };
 
   return (
@@ -68,7 +71,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
         className="flex items-center text-xs font-bold text-black uppercase tracking-wider hover:underline self-start space-x-1"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali</span>
+        <span>{t.back}</span>
       </button>
 
       {/* Detail Card */}
@@ -79,7 +82,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
               <h1 className={`text-lg font-black text-black uppercase tracking-tight ${bill.paid ? 'line-through text-gray-400' : ''}`}>
                 {bill.title}
               </h1>
-              <p className="text-xs text-gray-400 font-bold mt-0.5">Jatuh Tempo: {bill.dueDate}</p>
+              <p className="text-xs text-gray-400 font-bold mt-0.5">{t.dueDateLabel}: {bill.dueDate}</p>
             </div>
 
             {bill.paid ? (
@@ -95,13 +98,13 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
 
           <div className="grid grid-cols-2 gap-4 pt-3 border-t border-black/10 text-xs">
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Nominal Tagihan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.billAmount}</span>
               <p className="text-sm font-extrabold text-black mt-0.5">
                 {profile.currency} {bill.amount.toLocaleString('id-ID')}
               </p>
             </div>
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">Pengulangan</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-gray-400">{t.repeatLabel}</span>
               <p className="text-sm font-extrabold text-black mt-0.5 uppercase tracking-wide">
                 {repeatLabels[bill.repeat] || bill.repeat}
               </p>
@@ -110,7 +113,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
 
           {bill.note && (
             <div className="border border-dashed border-black/20 p-2.5 bg-gray-50 text-xs text-gray-600">
-              <span className="font-bold text-[10px] uppercase block mb-1 text-black">Catatan Tagihan:</span>
+              <span className="font-bold text-[10px] uppercase block mb-1 text-black">{t.note}:</span>
               {bill.note}
             </div>
           )}
@@ -127,12 +130,12 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
           {bill.paid ? (
             <>
               <Square className="w-4 h-4" />
-              Tandai Belum Dibayar
+              {t.markAsUnpaid}
             </>
           ) : (
             <>
               <CheckSquare className="w-4 h-4" />
-              Tandai Sudah Dibayar
+              {t.markAsPaid}
             </>
           )}
         </Button>
@@ -144,7 +147,7 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
             className="flex items-center justify-center gap-1.5"
           >
             <Edit className="w-4 h-4" />
-            Ubah Tagihan
+            {t.txEdit}
           </Button>
           <Button
             onClick={handleDelete}
@@ -152,13 +155,13 @@ export const BillDetail: React.FC<BillDetailProps> = ({ billId, onBack }) => {
             className="flex items-center justify-center gap-1.5"
           >
             <Trash2 className="w-4 h-4" />
-            Hapus Tagihan
+            {t.delete}
           </Button>
         </div>
       </div>
 
       {/* Edit Modal */}
-      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Ubah Tagihan">
+      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title={t.txEdit}>
         <BillForm
           onSubmit={handleEditSubmit}
           onCancel={() => setIsEditOpen(false)}

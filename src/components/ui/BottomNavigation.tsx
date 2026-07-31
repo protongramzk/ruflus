@@ -1,25 +1,35 @@
 import React from 'react';
-import { LayoutDashboard, Wallet, Users, Landmark, CreditCard, Settings as SettingsIcon } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Wallet,
+  Users,
+  Landmark,
+  CreditCard,
+  Settings as SettingsIcon
+} from 'lucide-react';
+import { TRANSLATIONS } from '../../utils/i18n';
+import { AppLanguage } from '../../types';
 
 export type TabType = 'dashboard' | 'finance' | 'split' | 'savings' | 'bills' | 'settings';
 
 interface BottomNavigationProps {
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
+  lang: AppLanguage;
 }
 
-export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, setActiveTab }) => {
+export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, setActiveTab, lang }) => {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+
   const tabs: { id: TabType; label: string; icon: React.FC<any> }[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'finance', label: 'Finance', icon: Wallet },
-    { id: 'split', label: 'Split', icon: Users },
-    { id: 'savings', label: 'Savings', icon: Landmark },
-    { id: 'bills', label: 'Bills', icon: CreditCard },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard },
+    { id: 'finance', label: t.finance, icon: Wallet },
+    { id: 'split', label: t.split, icon: Users },
+    { id: 'savings', label: t.savings, icon: Landmark },
+    { id: 'bills', label: t.bills, icon: CreditCard },
+    { id: 'settings', label: t.settings, icon: SettingsIcon },
   ];
 
-  // Cassava UI: Strict Bottom navigation layout, high contrast, orthogonal buttons.
-  // Bipolar Inversion on Selected: white text on black background for selected tab.
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black z-40">
       <div className="flex h-16 max-w-lg mx-auto">

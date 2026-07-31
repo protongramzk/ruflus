@@ -17,6 +17,7 @@ import { BillsReminder } from '../components/dashboard/BillsReminder';
 import { ActiveSplit } from '../components/dashboard/ActiveSplit';
 import { RecentTransactions } from '../components/dashboard/RecentTransactions';
 import { TabType } from '../components/ui/BottomNavigation';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface DashboardProps {
   onNavigate: (tab: TabType, targetId?: string) => void;
@@ -47,7 +48,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   if (!profile) return null;
 
-  // Calculatations
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
+
+  // Calculations
   const totalIncome = transactions
     .filter(t => t.type === 'income')
     .reduce((sum, t) => sum + t.amount, 0);
@@ -59,22 +62,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   // Calculate current month's income and expenses
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth(); // 0-indexed
+  const currentMonth = now.getMonth();
 
-  const monthlyTransactions = transactions.filter(t => {
-    const d = new Date(t.createdAt);
+  const monthlyTransactions = transactions.filter(tx => {
+    const d = new Date(tx.createdAt);
     return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
   });
 
   const monthlyIncome = monthlyTransactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter(tx => tx.type === 'income')
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
   const monthlyExpense = monthlyTransactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter(tx => tx.type === 'expense')
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
-  const formattedDate = new Date().toLocaleDateString('id-ID', {
+  // Dynamic date locale based on selected language
+  const localeMap: Record<string, string> = { id: 'id-ID', ms: 'ms-MY', ja: 'ja-JP', zh: 'zh-CN' };
+  const currentLocale = localeMap[profile.language] || 'id-ID';
+
+  const formattedDate = new Date().toLocaleDateString(currentLocale, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -86,7 +93,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="flex flex-col space-y-1">
         <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-500">
-          Selamat Datang,
+          {t.welcome}
         </span>
         <h1 className="text-xl font-black text-black uppercase tracking-tight">
           {profile.name}
@@ -108,12 +115,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           goals={goals.slice(0, 3)}
           currency={profile.currency}
           onViewAll={() => onNavigate('savings')}
+          lang={profile.language}
         />
 
         <BillsReminder
           bills={bills}
           currency={profile.currency}
           onViewAll={() => onNavigate('bills')}
+          lang={profile.language}
         />
       </div>
 
@@ -124,6 +133,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         shares={shares}
         currency={profile.currency}
         onViewAll={() => onNavigate('split')}
+        lang={profile.language}
       />
 
       <RecentTransactions
@@ -132,6 +142,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         currency={profile.currency}
         onViewAll={() => onNavigate('finance')}
         onTxClick={(id) => onNavigate('finance', id)}
+        lang={profile.language}
       />
     </div>
   );

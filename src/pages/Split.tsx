@@ -13,6 +13,7 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { GroupForm } from '../components/split/GroupForm';
 import { Users, Plus } from 'lucide-react';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface SplitProps {
   onViewGroup: (groupId: string) => void;
@@ -25,7 +26,6 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
   const [expenses, setExpenses] = useState<SplitExpense[]>([]);
   const [shares, setShares] = useState<SplitShare[]>([]);
 
-  // Tabs: 'active' | 'settled'
   const [activeTab, setActiveTab] = useState<'active' | 'settled'>('active');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -43,14 +43,13 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
 
   if (!profile) return null;
 
-  // Filter groups as settled or active
-  // A group is settled if ALL expenses shares are settled
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
+
   const groupsWithStatus = groups.map(group => {
     const groupExpenses = expenses.filter(e => e.groupId === group.id);
     const expIds = groupExpenses.map(e => e.id);
     const groupShares = shares.filter(s => expIds.includes(s.expenseId));
 
-    // If no expenses, it is technically active
     const isSettled = groupShares.length > 0 && groupShares.every(s => s.settled);
     const totalAmount = groupExpenses.reduce((sum, e) => sum + e.amount, 0);
 
@@ -77,8 +76,8 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-black text-black uppercase tracking-tight">Split Bill</h1>
-          <p className="text-xs text-gray-400 font-bold">Patungan bersama teman & keluarga</p>
+          <h1 className="text-xl font-black text-black uppercase tracking-tight">{t.split}</h1>
+          <p className="text-xs text-gray-400 font-bold">{t.splitSub}</p>
         </div>
       </div>
 
@@ -92,7 +91,7 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
               : 'text-black hover:bg-black/5'
           }`}
         >
-          Grup Aktif
+          {t.activeGroups}
         </button>
         <button
           onClick={() => setActiveTab('settled')}
@@ -102,7 +101,7 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
               : 'text-black hover:bg-black/5'
           }`}
         >
-          Selesai (Settled)
+          {t.settledGroups}
         </button>
       </div>
 
@@ -111,10 +110,10 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
         {filteredGroups.length === 0 ? (
           <div className="py-12 border border-dashed border-black/20 text-center flex flex-col items-center justify-center space-y-2 bg-gray-50/50">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              {activeTab === 'settled' ? 'Belum ada patungan selesai' : 'Belum ada patungan aktif'}
+              {activeTab === 'settled' ? t.noSplitFound : t.noSplitFound}
             </span>
             <Button variant="secondary" onClick={() => setIsCreateOpen(true)} className="text-xs px-3 py-1">
-              Buat Grup Patungan
+              {t.createGroup}
             </Button>
           </div>
         ) : (
@@ -131,17 +130,17 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
                       {g.name}
                     </h3>
                     <p className="text-xs text-gray-400 truncate max-w-[200px] mt-0.5">
-                      {g.description || 'Tidak ada deskripsi'}
+                      {g.description || t.noDescription}
                     </p>
                     <div className="flex items-center space-x-1.5 mt-2 text-[10px] text-gray-500 font-bold">
                       <Users className="w-3 h-3 text-black" />
-                      <span>{g.memberCount} Anggota</span>
+                      <span>{g.memberCount} {t.membersLabel}</span>
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
                     <span className="text-[9px] font-extrabold uppercase tracking-wider text-gray-400 block">
-                      Total Belanja
+                      {t.groupTotalSpend}
                     </span>
                     <span className="text-xs font-black text-black">
                       {profile.currency} {g.totalAmount.toLocaleString('id-ID')}
@@ -166,7 +165,7 @@ export const Split: React.FC<SplitProps> = ({ onViewGroup }) => {
       </div>
 
       {/* Create Group Modal */}
-      <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Buat Grup Patungan">
+      <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title={t.createGroup}>
         <GroupForm
           onSubmit={handleCreateGroup}
           onCancel={() => setIsCreateOpen(false)}

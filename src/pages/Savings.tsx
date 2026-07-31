@@ -5,7 +5,8 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { GoalForm } from '../components/savings/GoalForm';
-import { Plus, Landmark } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { TRANSLATIONS } from '../utils/i18n';
 
 interface SavingsProps {
   onViewGoal: (id: string) => void;
@@ -27,6 +28,8 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
 
   if (!profile) return null;
 
+  const t = TRANSLATIONS[profile.language] || TRANSLATIONS.id;
+
   const handleCreateGoal = (data: { name: string; targetAmount: number; deadline: string; note: string }) => {
     addSavingGoal(data);
     reloadData();
@@ -38,24 +41,24 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-black text-black uppercase tracking-tight">Savings</h1>
-          <p className="text-xs text-gray-400 font-bold">Raih impian keuangan Anda melalui tabungan</p>
+          <h1 className="text-xl font-black text-black uppercase tracking-tight">{t.savings}</h1>
+          <p className="text-xs text-gray-400 font-bold">{t.savingsSub}</p>
         </div>
       </div>
 
       {/* Goal List */}
       <div className="flex flex-col space-y-2 mt-2">
         <h2 className="text-xs font-black uppercase tracking-widest text-black border-b border-black pb-1.5">
-          Target Tabungan Aktif ({goals.length})
+          {t.activeGoals} ({goals.length})
         </h2>
 
         {goals.length === 0 ? (
           <div className="py-12 border border-dashed border-black/20 text-center flex flex-col items-center justify-center space-y-2 bg-gray-50/50">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Belum ada target tabungan dibuat
+              {t.noGoals}
             </span>
             <Button variant="secondary" onClick={() => setIsAddOpen(true)} className="text-xs px-3 py-1">
-              Mulai Menabung
+              {t.startSavingNow}
             </Button>
           </div>
         ) : (
@@ -78,7 +81,7 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
                           {goal.name}
                         </h3>
                         <p className="text-[10px] text-gray-400 font-bold mt-0.5">
-                          Tenggat: {goal.deadline}
+                          {t.savingGoalDeadline}: {goal.deadline}
                         </p>
                       </div>
 
@@ -98,7 +101,7 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
                     </div>
 
                     <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
-                      <span>Terkumpul: {profile.currency} {goal.currentAmount.toLocaleString('id-ID')}</span>
+                      <span>{t.total}: {profile.currency} {goal.currentAmount.toLocaleString('id-ID')}</span>
                       <span>Target: {profile.currency} {goal.targetAmount.toLocaleString('id-ID')}</span>
                     </div>
                   </div>
@@ -121,7 +124,7 @@ export const Savings: React.FC<SavingsProps> = ({ onViewGoal }) => {
       </div>
 
       {/* Add Modal */}
-      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Tambah Target Tabungan">
+      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title={t.startSavingNow}>
         <GoalForm
           onSubmit={handleCreateGoal}
           onCancel={() => setIsAddOpen(false)}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { initializeStorage } from './utils/storage';
+import { initializeStorage, getProfile } from './utils/storage';
 import { BottomNavigation, TabType } from './components/ui/BottomNavigation';
 import { Dashboard } from './pages/Dashboard';
 import { Finance } from './pages/Finance';
@@ -10,9 +10,11 @@ import { SavingDetail } from './pages/SavingDetail';
 import { Bills } from './pages/Bills';
 import { BillDetail } from './pages/BillDetail';
 import { Settings } from './pages/Settings';
+import { AppProfile } from './types';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [profile, setProfile] = useState<AppProfile | null>(null);
 
   // Custom navigation parameters for subpages
   const [currentGroupId, setCurrentGroupId] = useState<string | null>(null);
@@ -25,9 +27,11 @@ export default function App() {
 
   useEffect(() => {
     initializeStorage();
+    setProfile(getProfile());
   }, []);
 
   const handleRefresh = () => {
+    setProfile(getProfile());
     setRefreshKey(prev => prev + 1);
   };
 
@@ -138,6 +142,8 @@ export default function App() {
     }
   };
 
+  const currentLang = profile?.language || 'id';
+
   // Cassava UI Layout wrapper
   return (
     <div className="bg-white min-h-screen text-black flex flex-col items-center">
@@ -157,6 +163,7 @@ export default function App() {
         <BottomNavigation
           activeTab={activeTab}
           setActiveTab={(tab) => handleNavigation(tab)}
+          lang={currentLang}
         />
       </div>
     </div>

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Transaction, Category } from '../../types';
+import { Transaction, Category, AppLanguage } from '../../types';
 import { Card } from '../ui/Card';
 import { DynamicIcon } from '../ui/DynamicIcon';
+import { TRANSLATIONS } from '../../utils/i18n';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -9,6 +10,7 @@ interface RecentTransactionsProps {
   currency: string;
   onViewAll: () => void;
   onTxClick: (id: string) => void;
+  lang: AppLanguage;
 }
 
 export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
@@ -16,25 +18,31 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   categories,
   currency,
   onViewAll,
-  onTxClick
+  onTxClick,
+  lang
 }) => {
-  // Sort by date desc, get first 5-10
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+
   const sorted = [...transactions]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
   return (
-    <Card title="Recent Transactions">
+    <Card title={t.recentTransactions}>
       {sorted.length === 0 ? (
         <div className="py-4 text-center text-xs text-gray-500 uppercase tracking-wider">
-          Belum ada transaksi
+          {t.noRecentTransactions}
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-black/10">
           {sorted.map(tx => {
             const cat = categories.find(c => c.id === tx.categoryId);
             const isInc = tx.type === 'income';
-            const dateStr = new Date(tx.createdAt).toLocaleDateString('id-ID', {
+
+            const localeMap: Record<string, string> = { id: 'id-ID', ms: 'ms-MY', ja: 'ja-JP', zh: 'zh-CN' };
+            const currentLocale = localeMap[lang] || 'id-ID';
+
+            const dateStr = new Date(tx.createdAt).toLocaleDateString(currentLocale, {
               day: 'numeric',
               month: 'short'
             });
@@ -71,7 +79,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
         onClick={onViewAll}
         className="w-full text-center text-[10px] font-extrabold uppercase tracking-widest mt-4 pt-2 border-t border-black/10 hover:underline text-black"
       >
-        Lihat Riwayat Transaksi →
+        {t.moreTransactions} →
       </button>
     </Card>
   );
