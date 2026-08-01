@@ -2,6 +2,7 @@ import React from 'react';
 import { SplitGroup, SplitMember, SplitExpense, SplitShare } from '../../types';
 import { Card } from '../ui/Card';
 import { Users } from 'lucide-react';
+import { t, formatAmount } from '../../utils/translations';
 
 interface ActiveSplitProps {
   groups: SplitGroup[];
@@ -10,6 +11,7 @@ interface ActiveSplitProps {
   shares: SplitShare[];
   currency: string;
   onViewAll: () => void;
+  lang?: string;
 }
 
 export const ActiveSplit: React.FC<ActiveSplitProps> = ({
@@ -18,7 +20,8 @@ export const ActiveSplit: React.FC<ActiveSplitProps> = ({
   expenses,
   shares,
   currency,
-  onViewAll
+  onViewAll,
+  lang
 }) => {
   // We want to count:
   // 1. Total Piutang (Someone owes me, i.e., I paid but others haven't settled)
@@ -57,25 +60,25 @@ export const ActiveSplit: React.FC<ActiveSplitProps> = ({
   });
 
   return (
-    <Card title="Active Split" className="w-full">
+    <Card title={t('split', lang)} className="w-full">
       <div className="flex flex-col space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="border border-black p-3 bg-gray-50">
-            <span className="text-[9px] font-extrabold uppercase tracking-widest text-green-600">▲ Total Piutang</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-green-600">▲ {lang === 'id' ? 'Total Piutang' : lang === 'ms' ? 'Jumlah Piutang' : lang === 'ja' ? '売掛金合計' : '应收账款总额'}</span>
             <p className="text-sm font-extrabold text-black mt-1">
-              {currency} {totalReceivable.toLocaleString('id-ID')}
+              {formatAmount(totalReceivable, currency, lang)}
             </p>
           </div>
           <div className="border border-black p-3 bg-gray-50">
-            <span className="text-[9px] font-extrabold uppercase tracking-widest text-red-600">▼ Total Utang</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-red-600">▼ {lang === 'id' ? 'Total Utang' : lang === 'ms' ? 'Jumlah Hutang' : lang === 'ja' ? '買掛金合計' : '应付账款总额'}</span>
             <p className="text-sm font-extrabold text-black mt-1">
-              {currency} {totalPayable.toLocaleString('id-ID')}
+              {formatAmount(totalPayable, currency, lang)}
             </p>
           </div>
         </div>
 
         <div className="flex items-center justify-between text-xs">
-          <span className="font-bold text-gray-500 uppercase tracking-wider">Grup Patungan Aktif</span>
+          <span className="font-bold text-gray-500 uppercase tracking-wider">{t('activeGroups', lang)}</span>
           <span className="font-extrabold text-black flex items-center gap-1">
             <Users className="w-3.5 h-3.5" />
             {groups.length}
@@ -86,7 +89,7 @@ export const ActiveSplit: React.FC<ActiveSplitProps> = ({
         onClick={onViewAll}
         className="w-full text-center text-[10px] font-extrabold uppercase tracking-widest mt-4 pt-2 border-t border-black/10 hover:underline text-black"
       >
-        Kelola Grup Patungan →
+        {t('viewAll', lang)} →
       </button>
     </Card>
   );

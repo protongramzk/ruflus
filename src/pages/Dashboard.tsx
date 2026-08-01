@@ -17,6 +17,7 @@ import { BillsReminder } from '../components/dashboard/BillsReminder';
 import { ActiveSplit } from '../components/dashboard/ActiveSplit';
 import { RecentTransactions } from '../components/dashboard/RecentTransactions';
 import { TabType } from '../components/ui/BottomNavigation';
+import { t, getLocale } from '../utils/translations';
 
 interface DashboardProps {
   onNavigate: (tab: TabType, targetId?: string) => void;
@@ -47,6 +48,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   if (!profile) return null;
 
+  const lang = profile.language || 'id';
+
   // Calculatations
   const totalIncome = transactions
     .filter(t => t.type === 'income')
@@ -74,7 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     .filter(t => t.type === 'expense')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const formattedDate = new Date().toLocaleDateString('id-ID', {
+  const formattedDate = new Date().toLocaleDateString(getLocale(lang), {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -86,7 +89,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="flex flex-col space-y-1">
         <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-500">
-          Selamat Datang,
+          {t('welcome', lang)}
         </span>
         <h1 className="text-xl font-black text-black uppercase tracking-tight">
           {profile.name}
@@ -100,6 +103,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         monthlyIncome={monthlyIncome}
         monthlyExpense={monthlyExpense}
         currency={profile.currency}
+        lang={lang}
       />
 
       {/* Grid of Overviews */}
@@ -108,12 +112,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           goals={goals.slice(0, 3)}
           currency={profile.currency}
           onViewAll={() => onNavigate('savings')}
+          lang={lang}
         />
 
         <BillsReminder
           bills={bills}
           currency={profile.currency}
           onViewAll={() => onNavigate('bills')}
+          lang={lang}
         />
       </div>
 
@@ -124,6 +130,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         shares={shares}
         currency={profile.currency}
         onViewAll={() => onNavigate('split')}
+        lang={lang}
       />
 
       <RecentTransactions
@@ -132,6 +139,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         currency={profile.currency}
         onViewAll={() => onNavigate('finance')}
         onTxClick={(id) => onNavigate('finance', id)}
+        lang={lang}
       />
     </div>
   );

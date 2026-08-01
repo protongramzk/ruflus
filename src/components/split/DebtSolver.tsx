@@ -1,12 +1,14 @@
 import React from 'react';
 import { SplitMember, SplitExpense, SplitShare } from '../../types';
 import { Card } from '../ui/Card';
+import { t, formatAmount } from '../../utils/translations';
 
 interface DebtSolverProps {
   members: SplitMember[];
   expenses: SplitExpense[];
   shares: SplitShare[];
   currency: string;
+  lang?: string;
 }
 
 export interface Settlement {
@@ -100,14 +102,14 @@ export function calculateSettlements(
   return settlements;
 }
 
-export const DebtSolver: React.FC<DebtSolverProps> = ({ members, expenses, shares, currency }) => {
+export const DebtSolver: React.FC<DebtSolverProps> = ({ members, expenses, shares, currency, lang }) => {
   const settlements = calculateSettlements(members, expenses, shares);
 
   return (
-    <Card title="Rekomendasi Pelunasan (Settlement)" className="border-2 border-black">
+    <Card title={t('debtSolverTitle', lang)} className="border-2 border-black">
       {settlements.length === 0 ? (
         <div className="py-2 text-center text-xs text-green-600 font-extrabold uppercase tracking-widest">
-          ✓ SEMUA TAGIHAN SUDAH LUNAS / SEIMBANG
+          {t('allSettled', lang)}
         </div>
       ) : (
         <div className="flex flex-col space-y-2">
@@ -122,11 +124,11 @@ export const DebtSolver: React.FC<DebtSolverProps> = ({ members, expenses, share
               >
                 <div className="flex items-center space-x-2 truncate">
                   <span className="text-red-600 uppercase tracking-wide truncate max-w-[100px]">{fromName}</span>
-                  <span className="text-gray-400 font-medium">bayar ke</span>
+                  <span className="text-gray-400 font-medium">{t('debtSolverPay', lang)}</span>
                   <span className="text-green-600 uppercase tracking-wide truncate max-w-[100px]">{toName}</span>
                 </div>
                 <span className="text-black shrink-0">
-                  {currency} {settle.amount.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
+                  {formatAmount(settle.amount, currency, lang)}
                 </span>
               </div>
             );
