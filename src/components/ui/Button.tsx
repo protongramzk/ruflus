@@ -19,10 +19,10 @@ export const Button: React.FC<ButtonProps> = ({
 
   if (variant === 'primary') {
     // Monochrome high contrast: white bg, black text, black border. Hover/Active: black bg, white text.
-    baseClass += 'bg-white text-black border-black hover:bg-black hover:text-white focus:bg-black focus:text-white ';
+    baseClass += 'bg-white text-black border-black hover:bg-primary hover:text-primary-text focus:bg-primary focus:text-primary-text ';
   } else if (variant === 'secondary') {
     // Soft contrast monochrome: bg-white text-gray-700 border-gray-300 hover:bg-black hover:text-white hover:border-black
-    baseClass += 'bg-white text-gray-800 border-gray-400 hover:bg-black hover:text-white hover:border-black focus:bg-black focus:text-white ';
+    baseClass += 'bg-white text-gray-800 border-gray-400 hover:bg-primary hover:text-primary-text hover:border-primary focus:bg-primary focus:text-primary-text ';
   } else if (variant === 'danger') {
     // Since color is secondary, we can keep borders distinct or use strong solid styles
     baseClass += 'bg-white text-red-600 border-red-600 hover:bg-red-600 hover:text-white focus:bg-red-600 focus:text-white ';

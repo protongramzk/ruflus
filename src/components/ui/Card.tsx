@@ -9,7 +9,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, className = '', onClick, title }) => {
   // Cassava UI Card: Orthogonal 0px radius, 1px black border, high contrast layout.
-  const clickableClass = onClick ? 'cursor-pointer hover:bg-black hover:text-white transition-all duration-150 group' : '';
+  const clickableClass = onClick ? 'cursor-pointer hover:bg-primary hover:text-primary-text hover:border-primary transition-all duration-150 group' : '';
 
   return (
     <div

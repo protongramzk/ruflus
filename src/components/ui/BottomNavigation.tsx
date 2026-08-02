@@ -33,7 +33,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, s
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex flex-col items-center justify-center space-y-1 transition-all duration-100 ${
                 isSelected
-                  ? 'bg-black text-white'
+                  ? 'bg-primary text-primary-text'
                   : 'bg-white text-black hover:bg-black/5'
               }`}
             >

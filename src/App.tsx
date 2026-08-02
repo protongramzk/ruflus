@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { initializeStorage } from './utils/storage';
+import { initializeStorage, getProfile } from './utils/storage';
 import { BottomNavigation, TabType } from './components/ui/BottomNavigation';
 import { Dashboard } from './pages/Dashboard';
 import { Finance } from './pages/Finance';
@@ -26,6 +26,20 @@ export default function App() {
   useEffect(() => {
     initializeStorage();
   }, []);
+
+  useEffect(() => {
+    const profile = getProfile();
+    if (profile) {
+      const currentTheme = profile.theme || 'monochrome';
+      const isDark = !!profile.darkMode;
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [refreshKey]);
 
   const handleRefresh = () => {
     setRefreshKey(prev => prev + 1);
@@ -145,7 +159,6 @@ export default function App() {
         {/* Top Sticky Branded Strip */}
         <div className="sticky top-0 z-40 bg-white border-b border-black flex items-center justify-between px-4 h-12 shrink-0">
           <span className="text-sm font-black uppercase tracking-widest text-black">RUFLUS</span>
-          <span className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-0.5">OFFLINE-FIRST</span>
         </div>
 
         {/* Scrollable contents wrapper */}

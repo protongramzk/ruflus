@@ -1,8 +1,290 @@
 @import "tailwindcss";
 
+@theme {
+  --color-white: var(--color-canvas);
+  --color-black: var(--color-tinta);
+  --color-gray-50: var(--color-panel-bg);
+  --color-gray-100: var(--color-card-bg);
+  --color-gray-200: var(--color-card-bg);
+  --color-gray-400: var(--color-muted);
+  --color-gray-500: var(--color-muted);
+  --color-gray-600: var(--color-muted);
+  --color-gray-700: var(--color-tinta);
+  --color-gray-800: var(--color-tinta);
+  --color-gray-900: var(--color-tinta);
+  --color-primary: var(--color-accent);
+  --color-primary-text: var(--color-accent-text);
+}
+
 @layer base {
   /* Cassava UI: Strict Orthogonal Geometries, 0px border radius, Inter Font, monochrome */
   * {
     border-radius: 0px !important;
   }
+}
+
+/* Default Theme: Monochrome Light */
+:root {
+  --color-canvas: #ffffff;
+  --color-tinta: #000000;
+  --color-border: #000000;
+  --color-accent: #000000;
+  --color-accent-text: #ffffff;
+  --color-muted: #6b7280;
+  --color-card-bg: #ffffff;
+  --color-panel-bg: #f9fafb;
+}
+
+/* Dark Mode base overrides */
+.dark {
+  --color-canvas: #0a0a0a;
+  --color-tinta: #f5f5f5;
+  --color-border: #ffffff;
+  --color-accent: #ffffff;
+  --color-accent-text: #000000;
+  --color-muted: #94a3b8;
+  --color-card-bg: #18181b;
+  --color-panel-bg: #0f0f10;
+}
+
+/* --- Theme Selection (24 Colors) --- */
+
+/* 1. monochrome */
+[data-theme="monochrome"] {
+  --color-accent: #000000;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="monochrome"] {
+  --color-accent: #ffffff;
+  --color-accent-text: #000000;
+}
+
+/* 2. slate */
+[data-theme="slate"] {
+  --color-accent: #475569;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="slate"] {
+  --color-accent: #94a3b8;
+  --color-accent-text: #0f172a;
+}
+
+/* 3. emerald */
+[data-theme="emerald"] {
+  --color-accent: #059669;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="emerald"] {
+  --color-accent: #34d399;
+  --color-accent-text: #064e3b;
+}
+
+/* 4. forest */
+[data-theme="forest"] {
+  --color-accent: #15803d;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="forest"] {
+  --color-accent: #4ade80;
+  --color-accent-text: #064e3b;
+}
+
+/* 5. mint */
+[data-theme="mint"] {
+  --color-accent: #0d9488;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="mint"] {
+  --color-accent: #2dd4bf;
+  --color-accent-text: #115e59;
+}
+
+/* 6. ocean */
+[data-theme="ocean"] {
+  --color-accent: #0284c7;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="ocean"] {
+  --color-accent: #38bdf8;
+  --color-accent-text: #0369a1;
+}
+
+/* 7. sky */
+[data-theme="sky"] {
+  --color-accent: #0ea5e9;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="sky"] {
+  --color-accent: #7dd3fc;
+  --color-accent-text: #0369a1;
+}
+
+/* 8. indigo */
+[data-theme="indigo"] {
+  --color-accent: #4f46e5;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="indigo"] {
+  --color-accent: #818cf8;
+  --color-accent-text: #1e1b4b;
+}
+
+/* 9. purple */
+[data-theme="purple"] {
+  --color-accent: #7c3aed;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="purple"] {
+  --color-accent: #a78bfa;
+  --color-accent-text: #2e1065;
+}
+
+/* 10. lavender */
+[data-theme="lavender"] {
+  --color-accent: #8b5cf6;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="lavender"] {
+  --color-accent: #c084fc;
+  --color-accent-text: #2e1065;
+}
+
+/* 11. crimson */
+[data-theme="crimson"] {
+  --color-accent: #dc2626;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="crimson"] {
+  --color-accent: #f87171;
+  --color-accent-text: #7f1d1d;
+}
+
+/* 12. rose */
+[data-theme="rose"] {
+  --color-accent: #db2777;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="rose"] {
+  --color-accent: #f472b6;
+  --color-accent-text: #4c0519;
+}
+
+/* 13. sunset */
+[data-theme="sunset"] {
+  --color-accent: #ea580c;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="sunset"] {
+  --color-accent: #fb923c;
+  --color-accent-text: #431407;
+}
+
+/* 14. coral */
+[data-theme="coral"] {
+  --color-accent: #f43f5e;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="coral"] {
+  --color-accent: #fb7185;
+  --color-accent-text: #4c0519;
+}
+
+/* 15. amber */
+[data-theme="amber"] {
+  --color-accent: #d97706;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="amber"] {
+  --color-accent: #fbbf24;
+  --color-accent-text: #451a03;
+}
+
+/* 16. olive */
+[data-theme="olive"] {
+  --color-accent: #65a30d;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="olive"] {
+  --color-accent: #a3e635;
+  --color-accent-text: #1a2e05;
+}
+
+/* 17. teal */
+[data-theme="teal"] {
+  --color-accent: #0d9488;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="teal"] {
+  --color-accent: #2dd4bf;
+  --color-accent-text: #115e59;
+}
+
+/* 18. sand */
+[data-theme="sand"] {
+  --color-accent: #b45309;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="sand"] {
+  --color-accent: #fbbf24;
+  --color-accent-text: #451a03;
+}
+
+/* 19. cocoa */
+[data-theme="cocoa"] {
+  --color-accent: #78350f;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="cocoa"] {
+  --color-accent: #f59e0b;
+  --color-accent-text: #451a03;
+}
+
+/* 20. plum */
+[data-theme="plum"] {
+  --color-accent: #86198f;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="plum"] {
+  --color-accent: #e879f9;
+  --color-accent-text: #4a044e;
+}
+
+/* 21. cyber */
+[data-theme="cyber"] {
+  --color-accent: #eab308;
+  --color-accent-text: #000000;
+}
+.dark[data-theme="cyber"] {
+  --color-accent: #fef08a;
+  --color-accent-text: #000000;
+}
+
+/* 22. neon */
+[data-theme="neon"] {
+  --color-accent: #16a34a;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="neon"] {
+  --color-accent: #4ade80;
+  --color-accent-text: #064e3b;
+}
+
+/* 23. clay */
+[data-theme="clay"] {
+  --color-accent: #c2410c;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="clay"] {
+  --color-accent: #f97316;
+  --color-accent-text: #431407;
+}
+
+/* 24. charcoal */
+[data-theme="charcoal"] {
+  --color-accent: #374151;
+  --color-accent-text: #ffffff;
+}
+.dark[data-theme="charcoal"] {
+  --color-accent: #9ca3af;
+  --color-accent-text: #111827;
 }
