@@ -113,6 +113,11 @@ export const translations = {
     aiExportDesc: "Salin statistik lengkap data keuangan Anda dalam format terstruktur yang ramah kecerdasan buatan (AI) untuk dievaluasi secara instan.",
     aiExportButton: "Salin Data Stats AI",
     aiExportSuccess: "Data AI Berhasil Disalin!",
+    languageLabel: "Pilih Bahasa",
+    themeLabel: "Warna Tema (24 Pilihan)",
+    darkModeLabel: "Mode Tampilan",
+    lightMode: "Mode Terang",
+    darkMode: "Mode Gelap",
   },
   ms: {
     dashboard: "Papan Pemuka",
@@ -221,6 +226,11 @@ export const translations = {
     aiExportDesc: "Salin ringkasan data kewangan lengkap anda dalam format berstruktur untuk penilaian pintar (AI) dengan segera.",
     aiExportButton: "Salin Data Statistik AI",
     aiExportSuccess: "Data Statistik AI Berjaya Disalin!",
+    languageLabel: "Pilih Bahasa",
+    themeLabel: "Warna Tema (24 Pilihan)",
+    darkModeLabel: "Mod Paparan",
+    lightMode: "Mod Terang",
+    darkMode: "Mod Gelap",
   },
   ja: {
     dashboard: "ダッシュボード",
@@ -329,6 +339,11 @@ export const translations = {
     aiExportDesc: "人工知能 (AI) による即時診断に適した構造化形式で、財務データ統計をコピーします。",
     aiExportButton: "AI統計データをコピー",
     aiExportSuccess: "AI用データのコピーに成功しました！",
+    languageLabel: "言語を選択",
+    themeLabel: "テーマカラー（24色）",
+    darkModeLabel: "表示モード",
+    lightMode: "ライトモード",
+    darkMode: "ダークモード",
   },
   zh: {
     dashboard: "仪表盘",
@@ -437,6 +452,11 @@ export const translations = {
     aiExportDesc: "一键复制格式化的结构化数据，方便导入到人工智能 (AI) 中进行财务诊断和智能评估。",
     aiExportButton: "复制 AI 分析数据",
     aiExportSuccess: "数据已成功复制到剪贴板！",
+    languageLabel: "选择语言",
+    themeLabel: "主题色彩（24色）",
+    darkModeLabel: "显示模式",
+    lightMode: "浅色模式",
+    darkMode: "深色模式",
   }
 };
 

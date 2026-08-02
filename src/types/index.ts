@@ -82,4 +82,6 @@ export interface AppProfile {
   name: string;
   currency: string; // e.g. 'Rp' or '$'
   language?: 'id' | 'ms' | 'ja' | 'zh';
+  theme?: string;
+  darkMode?: boolean;
 }
