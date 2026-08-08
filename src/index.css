@@ -17,10 +17,67 @@
 }
 
 @layer base {
-  /* Cassava UI: Strict Orthogonal Geometries, 0px border radius, Inter Font, monochrome */
+  /* Cassava UI: Dynamic Geometries with Custom Radius Token, Inter Font */
   * {
-    border-radius: 0px !important;
+    border-radius: var(--border-radius, 0px);
   }
+}
+
+/* --- Cassava UI: Design Density & Border Radius Tokens --- */
+:root {
+  --border-radius: 0px;
+  --density-padding-card: 1rem;       /* Default 16px */
+  --density-padding-button: 0.5rem 1rem; /* Default 8px 16px */
+  --density-gap: 1rem;                /* Default 16px */
+  --density-padding-input: 0.5rem 0.75rem; /* Default 8px 12px */
+}
+
+/* Densities */
+[data-density="compact"] {
+  --density-padding-card: 0.5rem;     /* 8px */
+  --density-padding-button: 0.25rem 0.5rem; /* 4px 8px */
+  --density-gap: 0.5rem;              /* 8px */
+  --density-padding-input: 0.25rem 0.5rem; /* 4px 8px */
+}
+[data-density="default"] {
+  --density-padding-card: 1rem;
+  --density-padding-button: 0.5rem 1rem;
+  --density-gap: 1rem;
+  --density-padding-input: 0.5rem 0.75rem;
+}
+[data-density="comfortable"] {
+  --density-padding-card: 1.5rem;     /* 24px */
+  --density-padding-button: 0.75rem 1.5rem; /* 12px 24px */
+  --density-gap: 1.5rem;              /* 24px */
+  --density-padding-input: 0.75rem 1.25rem; /* 12px 20px */
+}
+
+/* Border Radiuses */
+[data-radius="sharp"] {
+  --border-radius: 0px;
+}
+[data-radius="small"] {
+  --border-radius: 2px;
+}
+[data-radius="medium"] {
+  --border-radius: 6px;
+}
+[data-radius="large"] {
+  --border-radius: 12px;
+}
+[data-radius="pill"] {
+  --border-radius: 9999px;
+}
+
+/* Custom Spring-Elastic Transitions & Tactile Micro-scaling */
+.spring-interactive {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              background-color 0.15s ease,
+              border-color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+.spring-interactive:active {
+  transform: scale(0.96) !important;
 }
 
 /* Default Theme: Monochrome Light */

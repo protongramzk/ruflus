@@ -56,7 +56,9 @@ const DEFAULT_CATEGORIES: Category[] = [
 
 const DEFAULT_PROFILE: AppProfile = {
   name: 'Pengguna Ruflus',
-  currency: 'Rp'
+  currency: 'Rp',
+  density: 'default',
+  radius: 'sharp'
 };
 
 // Initialize Storage with Seed Data
