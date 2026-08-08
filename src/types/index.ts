@@ -84,4 +84,6 @@ export interface AppProfile {
   language?: 'id' | 'ms' | 'ja' | 'zh';
   theme?: string;
   darkMode?: boolean;
+  density?: 'compact' | 'default' | 'comfortable';
+  radius?: 'sharp' | 'small' | 'medium' | 'large' | 'pill';
 }

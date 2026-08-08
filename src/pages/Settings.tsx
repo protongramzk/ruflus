@@ -85,7 +85,21 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
     onRefreshData();
   };
 
+  const handleDensityChange = (densityVal: 'compact' | 'default' | 'comfortable') => {
+    updateProfile({ density: densityVal });
+    loadProfileData();
+    onRefreshData();
+  };
+
+  const handleRadiusChange = (radiusVal: 'sharp' | 'small' | 'medium' | 'large' | 'pill') => {
+    updateProfile({ radius: radiusVal });
+    loadProfileData();
+    onRefreshData();
+  };
+
   const activeTheme = profile.theme || 'monochrome';
+  const activeDensity = profile.density || 'default';
+  const activeRadius = profile.radius || 'sharp';
 
   return (
     <div className="flex flex-col space-y-4 pb-24">
@@ -161,6 +175,52 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
         </div>
       </div>
 
+      {/* Design Density Config */}
+      <div className="border border-black p-4 bg-gray-50 flex flex-col space-y-3">
+        <span className="text-[10px] font-extrabold uppercase tracking-widest text-black">
+          {t('densityLabel', lang)}
+        </span>
+        <div className="flex space-x-2">
+          {(['compact', 'default', 'comfortable'] as const).map((d) => (
+            <Button
+              key={d}
+              variant={activeDensity === d ? 'primary' : 'secondary'}
+              onClick={() => handleDensityChange(d)}
+              fullWidth
+            >
+              {t(`density${d.charAt(0).toUpperCase() + d.slice(1)}`, lang)}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Border Radius Config */}
+      <div className="border border-black p-4 bg-gray-50 flex flex-col space-y-3">
+        <span className="text-[10px] font-extrabold uppercase tracking-widest text-black">
+          {t('radiusLabel', lang)}
+        </span>
+        <div className="grid grid-cols-5 gap-1.5">
+          {(['sharp', 'small', 'medium', 'large', 'pill'] as const).map((r) => (
+            <button
+              key={r}
+              onClick={() => handleRadiusChange(r)}
+              className={`p-2 border transition-all duration-150 flex flex-col items-center justify-center space-y-1 spring-interactive cursor-pointer ${
+                activeRadius === r
+                  ? 'border-2 border-black bg-black text-white font-extrabold'
+                  : 'border-black/20 bg-white text-black hover:border-black'
+              }`}
+              style={{
+                borderRadius: r === 'sharp' ? '0px' : r === 'small' ? '2px' : r === 'medium' ? '6px' : r === 'large' ? '12px' : '9999px'
+              }}
+            >
+              <span className="text-[9px] uppercase tracking-tighter truncate w-full text-center">
+                {t(`radius${r.charAt(0).toUpperCase() + r.slice(1)}`, lang)}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Theme Swatches Selection */}
       <div className="border border-black p-4 bg-gray-50 flex flex-col space-y-3">
         <span className="text-[10px] font-extrabold uppercase tracking-widest text-black">
@@ -173,15 +233,18 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
               <button
                 key={th.id}
                 onClick={() => handleThemeSelect(th.id)}
-                className={`p-2 border transition-all duration-150 flex flex-col items-center space-y-1 ${
+                className={`p-2 border transition-all duration-150 flex flex-col items-center space-y-1 spring-interactive cursor-pointer ${
                   isSelected
                     ? 'border-2 border-black bg-black text-white font-extrabold'
                     : 'border-black/20 bg-white text-black hover:border-black'
                 }`}
+                style={{
+                  borderRadius: 'var(--border-radius)'
+                }}
               >
                 <div
                   className="w-5 h-5 border border-black shrink-0"
-                  style={{ backgroundColor: th.color }}
+                  style={{ backgroundColor: th.color, borderRadius: 'var(--border-radius)' }}
                 />
                 <span className="text-[9px] uppercase tracking-tighter truncate w-full text-center">
                   {th.name}

@@ -32,7 +32,13 @@ export default function App() {
     if (profile) {
       const currentTheme = profile.theme || 'monochrome';
       const isDark = !!profile.darkMode;
+      const currentDensity = profile.density || 'default';
+      const currentRadius = profile.radius || 'sharp';
+
       document.documentElement.setAttribute('data-theme', currentTheme);
+      document.documentElement.setAttribute('data-density', currentDensity);
+      document.documentElement.setAttribute('data-radius', currentRadius);
+
       if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
